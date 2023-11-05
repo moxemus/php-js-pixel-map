@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        td {
+            width: 10px;
+            height: 10px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<table id="pixelTable"></table>
+
+<script>
+    // Sample array with color values
+    const colorArray = [
+        '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF',
+        '#00FFFF', '#FFA500', '#008000', '#800080', '#808080'
+    ];
+
+    const table = document.getElementById('pixelTable');
+
+    // Determine the number of rows and columns based on the array length
+    const numRows = Math.ceil(Math.sqrt(colorArray.length));
+    const numCols = Math.ceil(colorArray.length / numRows);
+
+    for (let i = 0; i < numRows; i++) {
+        const row = table.insertRow(i);
+        for (let j = 0; j < numCols; j++) {
+            const cell = row.insertCell(j);
+            const colorIndex = i * numCols + j;
+
+            if (colorIndex < colorArray.length) {
+                cell.style.backgroundColor = colorArray[colorIndex];
+                cell.addEventListener('click', () => {
+                    // Send an HTTP request when the cell is clicked, including the cell index
+                    sendHttpRequest(colorArray[colorIndex], i, j);
+                });
+            }
+        }
+    }
+
+    // Function to send an HTTP request with cell index
+    function sendHttpRequest(color, rowIndex, colIndex) {
+        // Replace this URL with your actual endpoint
+        const url = 'http://localhost:8888/map'; // Example URL
+        const data = { color: color, rowIndex: rowIndex, colIndex: colIndex };
+
+        fetch(url, {
+            method: 'POST', // Adjust the method as needed
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response:', data);
+                // Handle the response as needed
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle errors
+            });
+    }
+</script>
+
+</body>
+</html>
